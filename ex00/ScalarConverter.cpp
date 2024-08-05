@@ -6,7 +6,7 @@
 /*   By: nlaerema <nlaerema@student.42lehavre.fr>	+#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:58:17 by nlaerema          #+#    #+#             */
-/*   Updated: 2024/03/22 01:57:34 by nlaerema         ###   ########.fr       */
+/*   Updated: 2024/08/05 15:34:56 by nlaerema         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,15 @@ void			ScalarConverter::convert(const std::string &str)
 		converted[INT] << IMPOSSIBLE;
 	else
 		converted[INT] << static_cast<int>(l);
-	if (end == str.c_str() || d < -FLT_MAX || FLT_MAX < d)
+	if (end == str.c_str() || errno == ERANGE || ((d < -FLT_MAX || FLT_MAX < d) && !isinf(d)))
 		converted[FLOAT] << IMPOSSIBLE;
-	else if (static_cast<float>(d) == ceilf(static_cast<float>(d)))
+	else if (static_cast<float>(d) == ceilf(static_cast<float>(d)) && !isinf(d))
 		converted[FLOAT] << std::fixed << std::setprecision(0) << static_cast<float>(d) << ".0f";
 	else
 		converted[FLOAT] << static_cast<float>(d) << "f";
 	if (end == str.c_str() || errno == ERANGE)
 		converted[DOUBLE] << IMPOSSIBLE;
-	else if (d == ceil(d))
+	else if (d == ceil(d) && !isinf(d))
 		converted[DOUBLE] << std::fixed << std::setprecision(0) << d << ".0";
 	else
 		converted[DOUBLE] << d;
